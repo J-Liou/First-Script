@@ -2,9 +2,13 @@ import os
 import shutil
 from subprocess import PIPE
 from pathlib import Path
+import hashlib
 
-def duplicateFiltering():
-    pass
+def duplicateFiltering(folder):
+    hashing = hashlib.sha256(folder)
+    with open(folder, 'rb') as f:
+        hashing.update(chunk)
+
 
 def getDownloadsFolder():
     return Path.home() / "Downloads"
