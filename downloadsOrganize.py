@@ -5,9 +5,14 @@ from pathlib import Path
 import hashlib
 
 def duplicateFiltering(folder):
-    hashing = hashlib.sha256(folder)
+    hasher = hashlib.sha256()
     with open(folder, 'rb') as f:
-        hashing.update(chunk)
+        while True:
+            chunk = f.read(8192)
+            if not chunk:
+                break
+            hasher.update(chunk)
+    return hasher.hexdigest()
 
 
 def getDownloadsFolder():
