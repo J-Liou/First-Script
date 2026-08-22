@@ -4,9 +4,9 @@ from subprocess import PIPE
 from pathlib import Path
 import hashlib
 
-def duplicateFiltering(folder):
+def duplicateFiltering(file):
     hasher = hashlib.sha256()
-    with open(folder, 'rb') as f:
+    with open(file, 'rb') as f:
         while True:
             chunk = f.read(8192)
             if not chunk:
