@@ -20,15 +20,14 @@ def fileHasher(file):
     return hasher.hexdigest()
 
 def dupeFiltering(folder):
-    set = {}
+    files = {}
 
     for file in folder.iterdir():
-        hash = fileHasher(file)
-        if hash in set:
-            currentPath = Path(__file__).resolve()
-            hashedFile(currentPath, hash)
-            print(f"{hashedFile.name} file deleted")
-        set.add(hash)
+        if file.is_file():
+            hash = fileHasher(file)
+            if hash in files:
+                files[hash] = file
+                print(f"{file} file deleted")
 
 
 
