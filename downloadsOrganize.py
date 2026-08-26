@@ -4,7 +4,12 @@ from subprocess import PIPE
 from pathlib import Path
 import hashlib
 
-def duplicateFiltering(file):
+class hashedFile:
+    def __init__(self, name, hash):
+        self.name = name
+        self.hash = hash
+
+def fileHasher(file):
     hasher = hashlib.sha256()
     with open(file, 'rb') as f:
         while True:
@@ -13,6 +18,18 @@ def duplicateFiltering(file):
                 break
             hasher.update(chunk)
     return hasher.hexdigest()
+
+def dupeFiltering(folder):
+    set = {}
+
+    for file in folder.iterdir():
+        hash = fileHasher(file)
+        if hash in set:
+            currentPath = Path(__file__).resolve()
+            hashedFile(currentPath, hash)
+            print(f"{hashedFile.name} file deleted")
+        set.add(hash)
+
 
 
 def getDownloadsFolder():
