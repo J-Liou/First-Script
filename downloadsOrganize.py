@@ -1,4 +1,5 @@
-import os
+#!/usr/bin/env python3
+
 import shutil
 from subprocess import PIPE
 from pathlib import Path
