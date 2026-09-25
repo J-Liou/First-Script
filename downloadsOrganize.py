@@ -28,8 +28,7 @@ def dupeFiltering(folder):
         if file.is_file():
             hash = fileHasher(file)
             if hash in seen: #file already in set
-                send2trash(file)
-                print(f"{file} file moved to trash")
+                print(f"Possible duplicate:\n  Keep: {seen[hash]}\n  Match: {file}\n")
             else:
                 seen[hash] = file #add file to seen set
 
@@ -37,28 +36,65 @@ def dupeFiltering(folder):
 
 def createNewFolder(parentFolder, name: str):
     folderPath = parentFolder / name
-    folderPath.mkdir(exists_ok=True)
+    folderPath.mkdir(parents=True, exist_ok=True)
 
 def createFolders(parentFolder, folderDict):
     for key in folderDict.keys():
         createNewFolder(parentFolder, key) #create folder with type name
 
 def mvFile2Folder(file, folderDict):
-    ext = Path(file).suffix.lower()
+    ext = file.suffix.lower()
+    folder = 'Misc'
+
     for folderName, extensions in folderDict.items():
-        if ext and ext in extensions: #file suffix aligns with a organized folder
-            destFolder = file.parent / folderName
-            shutil.move(file, destFolder)
-    else:
-        shutil.move(file, file.parent / 'Misc')
+        if ext and ext in extensions:
+            folder = folderName
+            break
+
+    destination = file.parent / folder / file.name
+
+    if destination.exists() or destination.is_symlink():
+        print(f"Skipped {file.name}: already exists in {folder}")
+        return
+
+    shutil.move(file, destination)
 
 def main():
     folderTypes = {
-        'Images': ['.png', '.jpg', '.jpeg'],
-        'Files': ['.pdf', '.docx'],
-        'Executables': ['.exe'],
-        'Misc': []
-    }
+    'Images': [
+        '.png', '.jpg', '.jpeg', '.gif', '.webp',
+        '.heic', '.avif', '.svg', '.bmp', '.tif', '.tiff', '.ico'
+    ],
+    'Documents': [
+        '.pdf', '.doc', '.docx', '.txt', '.rtf', '.odt', '.md'
+    ],
+    'Spreadsheets': [
+        '.xls', '.xlsx', '.csv', '.tsv', '.ods'
+    ],
+    'Presentations': [
+        '.ppt', '.pptx', '.key', '.odp'
+    ],
+    'Archives': [
+        '.zip', '.rar', '.7z', '.tar', '.gz', '.bz2', '.xz'
+    ],
+    'Installers': [
+        '.dmg', '.pkg', '.exe', '.msi', '.msix', '.iso'
+    ],
+    'Audio': [
+        '.mp3', '.wav', '.m4a', '.aac', '.flac', '.ogg', '.aiff'
+    ],
+    'Videos': [
+        '.mp4', '.mov', '.mkv', '.avi', '.webm', '.m4v'
+    ],
+    'Code': [
+        '.py', '.js', '.ts', '.html', '.css', '.json',
+        '.xml', '.yaml', '.yml', '.sh', '.bat', '.ps1', '.sql'
+    ],
+    'Fonts': [
+        '.ttf', '.otf', '.woff', '.woff2'
+    ],
+    'Misc': []
+}
     downloads = Path.home() / "Downloads"
     createFolders(downloads, folderTypes)
 
